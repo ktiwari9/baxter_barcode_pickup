@@ -4,7 +4,13 @@ project(baxter_barcode_pickup)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+	roscpp
+	rospy
+	std_msgs
+)
+
+#EDITED!!!!!!!!!!!!!!!!!!!!!!!
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -96,16 +102,16 @@ catkin_package(
 # )
 
 ## Declare a cpp executable
-# add_executable(baxter_barcode_pickup_node src/baxter_barcode_pickup_node.cpp)
+ add_executable(2test src/2test.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(baxter_barcode_pickup_node baxter_barcode_pickup_generate_messages_cpp)
+ add_dependencies(2test baxter_barcode_pickup_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(baxter_barcode_pickup_node
-#   ${catkin_LIBRARIES}
-# )
+ target_link_libraries(2test
+   ${catkin_LIBRARIES}
+ )
 
 #############
 ## Install ##
@@ -154,5 +160,3 @@ catkin_package(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-add_executable(test src/test.cpp)
-target_link_libraries(test ${catkin_LIBRARIES})
