@@ -3,7 +3,7 @@ baxter_barcode_pickup
 
 Baxter Barcode Pickup
 
-To set up this project:  
+#####To set up this project:  
 ######Create a new catkin folder  
 
     mkdir -p ~/group_project/src  
