@@ -6,7 +6,7 @@ Baxter Barcode Pickup
 To set up this project:  
 ######Create a new catkin folder  
 
-    mkdir -p group_project/src  
+    mkdir -p ~/group_project/src  
     cd group_project  
     catkin_init_workspace  
 
@@ -25,7 +25,7 @@ To set up this project:
      
      cd ~/group_project/src
      git add .  #Use the --all option if you have added new files/folders // Uneccesary if you have not added files/folders
-     git commit
+     git commit -a
      
 ######Once your sure your changes work push them back to the repository  
 
