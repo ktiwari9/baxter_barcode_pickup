@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package()
 
-add_executable(video_to_bag src/video_to_bag.cpp)
+#add_executable(video_to_bag src/video_to_bag.cpp)
 
-target_link_libraries(video_to_bag ${catkin_LIBRARIES})
+#target_link_libraries(video_to_bag ${catkin_LIBRARIES})
 
