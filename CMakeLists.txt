@@ -10,15 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package()
 
-## Declare a cpp executable
-add_executable(PlayBagVideo src/PlayBagVideo.cpp)
+#add_executable(video_to_bag src/video_to_bag.cpp)
 
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-add_dependencies(PlayBagVideo baxter_barcode_pickup_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-target_link_libraries(PlayBagVideo
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(video_to_bag ${catkin_LIBRARIES})
 
