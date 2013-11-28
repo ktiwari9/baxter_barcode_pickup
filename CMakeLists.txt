@@ -2,15 +2,28 @@ cmake_minimum_required(VERSION 2.8.3)
 project(baxter_barcode_pickup)
 
 find_package(catkin REQUIRED COMPONENTS
-	roscpp
-	std_msgs
-	image_transport
-	cv_bridge
+  moveit_core
+  moveit_ros_planning
+  moveit_ros_planning_interface
+  block_grasp_generator
+  baxter_core_msgs
+  std_msgs
+  geometry_msgs
+  baxter_control
+  roscpp
 )
 
-catkin_package()
+find_package(Eigen REQUIRED)
+find_package(Boost REQUIRED system thread)
+catkin_package( INCLUDE_DIRS include)
 
-#add_executable(video_to_bag src/video_to_bag.cpp)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g")
+set(CMAKE_BUILD_TYPE Debug)
+add_executable()
 
-#target_link_libraries(video_to_bag ${catkin_LIBRARIES})
+include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+
+add_executable(ar_viz_servo src/ar_viz_servo.cpp)
+target_link_libraries(ar_viz_servo ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
 

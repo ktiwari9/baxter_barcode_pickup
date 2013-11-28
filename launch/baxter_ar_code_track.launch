@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <arg name="marker_size" default="5.5" />
+  <arg name="max_new_marker_error" default="0.05" />
+  <arg name="max_track_error" default="0.1" />
+  <arg name="left_cam_image_topic" default="/cameras/left_hand_camera/image" />
+  <arg name="left_cam_info_topic" default="/cameras/left_hand_camera/camera_info" />	
+  <arg name="right_cam_image_topic" default="/cameras/right_hand_camera/image" />
+  <arg name="right_cam_info_topic" default="/cameras/right_hand_camera/camera_info" />	
+  <arg name="right_output_frame" default="base" />
+  <arg name="left_output_frame" default="base" />
+
+  <node name="ar_track_left" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen" args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg left_cam_image_topic) $(arg left_cam_info_topic) $(arg left_output_frame)" />
+  <node name="ar_track_right" pkg="ar_track_alvar" type="individualMarkersNoKinect" respawn="false" output="screen" args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg right_cam_image_topic) $(arg right_cam_info_topic) $(arg right_output_frame)" />
+</launch>
