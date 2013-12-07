@@ -45,12 +45,4 @@
     <arg name="debug" value="$(arg debug)"/>
     <arg name="info" value="true"/>
   </include>
-
-  <!-- start rviz -->
-  <arg name="rviz_config" value="-d $(find baxter_barcode_pickup)/launch/camera_view.rviz" />
-  
-  <node name="moveit_rviz" launch-prefix="$(arg launch_prefix)" pkg="rviz" type="rviz" respawn="false"
-  	args="$(arg rviz_config)" output="screen">
-    <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
-  </node>
 </launch>

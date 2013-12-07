@@ -10,20 +10,26 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   baxter_control
+  image_transport
+  cv_bridge
   roscpp
+  tf
 )
 
 find_package(Eigen REQUIRED)
 find_package(Boost REQUIRED system thread)
-catkin_package( INCLUDE_DIRS include)
-
+catkin_package(
+  INCLUDE_DIRS #include
+)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g")
 set(CMAKE_BUILD_TYPE Debug)
-add_executable()
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 add_executable(ar_viz_servo src/ar_viz_servo.cpp)
 target_link_libraries(ar_viz_servo ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(viz_servo src/viz_servo.cpp)
+target_link_libraries(viz_servo ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 

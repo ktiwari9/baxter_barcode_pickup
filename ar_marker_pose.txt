@@ -1,0 +1,35 @@
+---
+header: 
+  seq: 114
+  stamp: 
+    secs: 0
+    nsecs: 0
+  frame_id: ''
+markers: 
+  - 
+    header: 
+      seq: 0
+      stamp: 
+        secs: 1386026370
+        nsecs: 316928000
+      frame_id: left_hand_camera
+    id: 7
+    confidence: 0
+    pose: 
+      header: 
+        seq: 0
+        stamp: 
+          secs: 0
+          nsecs: 0
+        frame_id: ''
+      pose: 
+        position: 
+          x: -0.180098948506
+          y: -0.0370140236838
+          z: 0.259854145516
+        orientation: 
+          x: 0.660825858071
+          y: 0.748722558671
+          z: 0.0175702534801
+          w: -0.0491426661278
+---

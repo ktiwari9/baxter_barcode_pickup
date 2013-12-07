@@ -1,0 +1,9 @@
+Type: ar_track_alvar/AlvarMarkers
+
+Publishers: 
+ * /ar_track_left (http://128.138.244.72:57580/)
+ * /ar_track_right (http://128.138.244.72:51355/)
+
+Subscribers: None
+
+
