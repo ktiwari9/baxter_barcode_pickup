@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   roscpp
   tf
+  baxter_gripper_server
 )
 
 find_package(Eigen REQUIRED)

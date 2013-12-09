@@ -8,6 +8,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <tf/transform_listener.h>
 #include <iostream>
+//#include <baxter_gripper_server/electric_parallel_gripper.h>
 
 class VisualServo
 {
@@ -28,24 +29,47 @@ private:
   std::vector<double> next_rpy_;
   tf::TransformListener tf_listener_;
   tf::StampedTransform tf_transform_;
-  // planning_interface::MotionPlanRequest req;
-  // planning_interface::MotionPlanResponse res;
-  // planning_interface::PlannerManagerPtr planner_instance;
+  double x_correct,y_correct,z_height;
+  double step_size, error_thresh;
+  geometry_msgs::PoseStamped pose;
+  //  baxter_gripper_server::ElectricParallelGripper left_gripper;
 public:
   VisualServo() : transporter_(node_),  
 		  arm_("left"),
 		  planning_group_name_(arm_+"_arm"),
 		  hand_camera_(arm_+"_hand_camera"),
 		  camera_image_("/cameras/"+hand_camera_+"/image")
+		  //		  left_gripper("baxter_left_gripper_action/gripper_action","left", false)
 		  
   {
     move_group_.reset(new move_group_interface::MoveGroup(planning_group_name_));
-    move_group_->setPlanningTime(10.0);
-    move_group_->setPlannerId("RRTstarkConfigDefault");
+    move_group_->setPlanningTime(20.0);
+    move_group_->setPlannerId("KPIECEkConfigDefault");
     image_pub_ = transporter_.advertise("image_tracker", 1);
     image_sub_ = transporter_.subscribe(camera_image_, 1, &VisualServo::tracker, this);
     cv::namedWindow("Baxter Image");
     cv::namedWindow("Threshold Image");
+    pose.header.frame_id = "base";  	
+    pose.pose.position.x = 0.4;
+    pose.pose.position.y = 0.2;
+    pose.pose.position.z = 0.35;
+    pose.pose.orientation.x = 1;
+    pose.pose.orientation.y = 0;
+    pose.pose.orientation.z = 0;
+    pose.pose.orientation.w = 0.0274;
+    move_group_->setPoseTarget(pose,"left_wrist");
+    move_group_->move();
+    move_group_->move();
+    z_height = 0.4;
+    // ROS_INFO_STREAM("WTF???\N");
+    // left_gripper.openGripper();
+    // ros::Duration(2.0).sleep();
+    // left_gripper.closeGripper();
+    // ros::Duration(2.0).sleep();
+    // left_gripper.openGripper();
+    // ros::Duration(2.0).sleep();
+    // left_gripper.closeGripper();
+    // ROS_INFO_STREAM("HUMM???\N");
     while(ros::ok())
       {
 	servo_to_tag();
@@ -55,23 +79,57 @@ public:
   bool servo_to_tag()
   	{
 	  tf_listener_.lookupTransform("/base","/left_hand_camera", ros::Time(0), tf_transform_);
-	  geometry_msgs::PoseStamped pose;
-	  std::cout << error_x_ << "," << error_y_ << "\n";
-	  std::cout << tf_transform_.getOrigin().x() << "," << tf_transform_.getOrigin().y() << "," << tf_transform_.getOrigin().z()  << "\n";
-	  if (error_x_ < 600 || error_x_ > 5 || error_y_ < 600 || error_x_ > 5)
+	  step_size = 0.05 ;
+	  error_thresh = 0.1 - 0.08*z_height/.4;
+	  if (error_x_ > error_thresh)
 	    {
-	      pose.header.frame_id = "base";  	
-	      pose.pose.position.x = tf_transform_.getOrigin().x()+error_x_*.0001;
-	      pose.pose.position.y = tf_transform_.getOrigin().y()+error_y_*.0001;
-	      pose.pose.position.z = tf_transform_.getOrigin().z();  
-	      pose.pose.orientation.x = tf_transform_.getRotation().x();
-	      pose.pose.orientation.y = tf_transform_.getRotation().y();
-	      pose.pose.orientation.z = tf_transform_.getRotation().z();
-	      pose.pose.orientation.w = tf_transform_.getRotation().w();
-	      std::cout << pose.pose.position.x << "," << pose.pose.position.y << "," << pose.pose.position.z << "\n";
-	      move_group_->setPoseTarget(pose,"left_wrist");
-	      move_group_->move();
+	      if (error_y_ > error_thresh)
+	  	{
+	  	  y_correct = -step_size;
+	  	  x_correct = -step_size;
+	  	}
+	      else if ( error_y_ < -error_thresh) 
+	  	{
+	  	  y_correct = step_size;
+	  	  x_correct = -step_size;
+	  	}
 	    }
+	  else if ( error_x_ < -error_thresh) 
+	    {
+	      if (error_y_ > error_thresh)
+	  	{
+	  	  y_correct = -step_size;
+	  	  x_correct = step_size;
+	  	}
+	      else if ( error_y_ < -error_thresh) 
+	  	{
+	  	  y_correct = step_size;
+	  	  x_correct = step_size;
+	  	}
+	    }
+	  else
+	    {
+	      x_correct = 0;
+	      y_correct = 0;
+	      if (z_height > 0.02)
+	  	z_height = z_height - .05;
+	      else
+		{
+		  z_height = -.05;
+		}
+
+	    }
+	  pose.pose.position.x = tf_transform_.getOrigin().x() + y_correct;
+	  pose.pose.position.y = tf_transform_.getOrigin().y() + x_correct;
+	  pose.pose.position.z = z_height;  
+	  pose.pose.orientation.x = 1;
+	  pose.pose.orientation.y = 0;
+	  pose.pose.orientation.z = 0;
+	  pose.pose.orientation.w = 0.0274;
+	  move_group_->setPoseTarget(pose,"left_wrist");
+	  move_group_->move();
+
+
   	}
 
   void tracker(const sensor_msgs::ImageConstPtr& msg)
@@ -100,8 +158,8 @@ public:
     double y = image_moment.m01/image_moment.m00;
     double height_center = cv_ptr->image.rows/2;
     double width_center = cv_ptr->image.cols/2;
-    error_y_ = (height_center-y);
-    error_x_ = (width_center-x);
+    error_y_ = (height_center-y)/height_center;
+    error_x_ = (width_center-x)/width_center;
     //ROS_INFO("%f,%f,%f,%f\n",x,y,error_x_,error_y_);
     cv::imshow("Baxter Image", cv_ptr->image);
     cv::waitKey(3);
