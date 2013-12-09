@@ -31,7 +31,9 @@ private:
   tf::StampedTransform tf_transform_;
   double x_correct,y_correct,z_height;
   double step_size, error_thresh;
+  double pixel_num;
   geometry_msgs::PoseStamped pose;
+  bool reset;
   //  baxter_gripper_server::ElectricParallelGripper left_gripper;
 public:
   VisualServo() : transporter_(node_),  
@@ -61,6 +63,7 @@ public:
     move_group_->move();
     move_group_->move();
     z_height = 0.4;
+
     // ROS_INFO_STREAM("WTF???\N");
     // left_gripper.openGripper();
     // ros::Duration(2.0).sleep();
@@ -76,9 +79,10 @@ public:
       }
   }
 
+
   bool servo_to_tag()
   	{
-	  tf_listener_.lookupTransform("/base","/left_hand_camera", ros::Time(0), tf_transform_);
+
 	  step_size = 0.05 ;
 	  error_thresh = 0.1 - 0.08*z_height/.4;
 	  if (error_x_ > error_thresh)
@@ -128,7 +132,7 @@ public:
 	  pose.pose.orientation.w = 0.0274;
 	  move_group_->setPoseTarget(pose,"left_wrist");
 	  move_group_->move();
-
+	  tf_listener_.lookupTransform("/base","/left_hand_camera", ros::Time(0), tf_transform_);
 
   	}
 
@@ -158,9 +162,17 @@ public:
     double y = image_moment.m01/image_moment.m00;
     double height_center = cv_ptr->image.rows/2;
     double width_center = cv_ptr->image.cols/2;
-    error_y_ = (height_center-y)/height_center;
-    error_x_ = (width_center-x)/width_center;
-    //ROS_INFO("%f,%f,%f,%f\n",x,y,error_x_,error_y_);
+    pixel_num = image_moment.m00;
+
+    // if (image_moment.m00 < 20)
+    //   {
+    //   }
+    // else
+    //   {
+    // 	error_y_ = (height_center-y)/height_center;
+    // 	error_x_ = (width_center-x)/width_center;
+    //   }
+    ROS_INFO("%f,%f,%f,%f\n",x,y,error_x_,error_y_);
     cv::imshow("Baxter Image", cv_ptr->image);
     cv::waitKey(3);
     
